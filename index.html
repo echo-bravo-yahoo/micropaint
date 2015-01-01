@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<style>
+			.pixel {
+				float: left;
+				height: 7px;
+				width: 7px;
+				margin-left: 3px;
+			}
+			.on {
+				background-color: #39B7CD;
+			}
+			.off {
+				background-color: #666666;
+			}
+			.parent {
+				height: 100%;
+				width: 100%;
+				max-height: 480;
+				max-width: 640;
+				display: flex;
+				flex-flow: row wrap;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="parent" class="parent"></div>
+		<script src="micropaint.js"></script>
+	</body>
+</html>
