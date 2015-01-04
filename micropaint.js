@@ -2,7 +2,7 @@ var isMouseDown = false;
 
 document.body.onmousedown = function() {
 	isMouseDown = true;
-	document.body.style.cursor = 'none';
+	//document.body.style.cursor = 'none';
 }
 
 document.body.onmouseup = function() {
