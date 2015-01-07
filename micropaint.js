@@ -1,5 +1,5 @@
 var isMouseDown = false;
-var drawMode = 'POSITIVE';
+var drawMode = 'TOGGLE';
 
 document.body.onmousedown = function() {
 	isMouseDown = true;
@@ -11,13 +11,64 @@ document.body.onmouseup = function() {
 }
 
 function exportToHeader() {
-	var result = "";
+	var result = '{ ';
+	var rowSize = 1;
+	var columnSize = 48;
 	console.log(document.querySelectorAll('.pixel'));
-	for(var rowCounter = 0; row < 6; row++) {
+	for(var rowCounter = 0; rowCounter < 6; rowCounter++) {
 		for(var byteCounter = 0; byteCounter < 64; byteCounter++) {
-			result.append()
+			//var temp = 0;
+			// for(var bitCounter = 0; bitCounter < 8; bitCounter++) {
+			// 	//temp+bitCounter*byteCounter
+			// 	console.log((rowCounter*64*8 + byteCounter*8 + bitCounter));
+			// 	if(document.getElementById('pixel-'+(rowCounter*64*8 + byteCounter*8 + bitCounter)).classList.contains('on')) {
+			// 		//console.log('Pixel '+(byteCounter*6 + bitCounter)+' is on.');
+			// 	}
+			// }
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 0*64, 3071)).classList.contains('on')) {
+				var bit0 = 1;
+			} else {
+				var bit0 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 1*64, 3071)).classList.contains('on')) {
+				var bit1 = 1;
+			} else {
+				var bit1 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 2*64, 3071)).classList.contains('on')) {
+				var bit2 = 1;
+			} else {
+				var bit2 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 3*64, 3071)).classList.contains('on')) {
+				var bit3 = 1;
+			} else {
+				var bit3 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 4*64, 3071)).classList.contains('on')) {
+				var bit4 = 1;
+			} else {
+				var bit4 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 5*64, 3071)).classList.contains('on')) {
+				var bit5 = 1;
+			} else {
+				var bit5 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 6*64, 3071)).classList.contains('on')) {
+				var bit6 = 1;
+			} else {
+				var bit6 = 0;
+			}
+			if(document.getElementById('pixel-'+Math.min(rowCounter*64*8 + byteCounter + 7*64, 3071)).classList.contains('on')) {
+				var bit7 = 1;
+			} else {
+				var bit7 = 0;
+			}
+			result += '0x'+String((bit0 << 7) + (bit1 << 6) + (bit2 << 5) + (bit3 << 4) + (bit4 << 3) + (bit5 << 2) + (bit6 << 1) + (bit7 << 0)) + ', ';
 		}
 	}
+	return result.substring(0, result.length-2) + ' };';
 }
 
 for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
