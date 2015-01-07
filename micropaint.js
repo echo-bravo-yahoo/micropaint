@@ -36,13 +36,16 @@ function exportToHeader() {
 	// console.log(document.querySelectorAll('.pixel'));
 	for(var rowCounter = 0; rowCounter < 6; rowCounter++) {
 		for(var byteCounter = 0; byteCounter < 64; byteCounter++) {
-			var bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7;
-			var bitArray = [bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7];
-			var rowOffset = (rowCounter << 9) + byteCounter;
+			//var bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7;
+			var bitArray = [];
+			var rowOffset = (rowCounter << 9);
 			for(var bitCounter = 0; bitCounter < 8; bitCounter++) {
-				bitArray[bitCounter] = document.getElementById('pixel-'+Math.min(rowOffset + bitCounter<<6, 3071)).classList.contains('on') | 0;
+				if(document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on')) {
+					console.log('pixel '+String(rowOffset + byteCounter + (bitCounter<<6)));
+				}
+				bitArray[bitCounter] = document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on') | 0;
 			}
-			result += '0x'+((bit0 << 0) + (bit1 << 1) + (bit2 << 2) + (bit3 << 3) + (bit4 << 4) + (bit5 << 5) + (bit6 << 6) + (bit7 << 7)).toString(16) + ', ';
+			result += '0x'+((bitArray[0] << 0) + (bitArray[1] << 1) + (bitArray[2] << 2) + (bitArray[3] << 3) + (bitArray[4] << 4) + (bitArray[5] << 5) + (bitArray[6] << 6) + (bitArray[7] << 7)).toString(16) + ', ';
 		}
 	}
 	// console.timeEnd('header');
