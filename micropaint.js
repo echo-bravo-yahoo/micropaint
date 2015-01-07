@@ -65,7 +65,7 @@ function exportToHeader() {
 			} else {
 				var bit7 = 0;
 			}
-			result += '0x'+String((bit0 << 7) + (bit1 << 6) + (bit2 << 5) + (bit3 << 4) + (bit4 << 3) + (bit5 << 2) + (bit6 << 1) + (bit7 << 0)) + ', ';
+			result += '0x'+((bit0 << 0) + (bit1 << 1) + (bit2 << 2) + (bit3 << 3) + (bit4 << 4) + (bit5 << 5) + (bit6 << 6) + (bit7 << 7)).toString(16) + ', ';
 		}
 	}
 	return result.substring(0, result.length-2) + ' };';
