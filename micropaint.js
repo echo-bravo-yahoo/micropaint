@@ -28,6 +28,16 @@ function exportDriver(loops) {
 	console.log('per loop: '+String(time / loops));
 }
 
+function saveState() {
+	localStorage.setItem('state', exportToHeader());
+}
+
+function loadState() {
+	if(localStorage.getItem('state') !== null) {
+		importFromHeader(localStorage.getItem('state'));	
+	}
+}
+
 function importFromHeader(header) {
 	var tokenList;
 	// trim char * declaration
@@ -53,35 +63,21 @@ function importFromHeader(header) {
 	// split on commas
 	tokenList = header.split(',');
 
-	// clear each pixel on screen
 	// loop for each entry
 	for (var tokenCounter = 0; tokenCounter < 384; tokenCounter++) {
-		//var bitArray = [];
-		// input in the form 0x4 or 0xff
 		// NOTE: get rid of 384 / magic numbers
-		// trim each tokenized entry
-		//("00" + tokenList[tokenCounter].trim().split('0x').pop()).slice(-2)
 		var temp = ("00000000" + parseInt(tokenList[tokenCounter]).toString(2)).slice(-8);
-		console.log(temp.length);
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
 			//bitArray[]
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
-				try {
-					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
-					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
-				} catch(err) {
-					console.log(tokenCounter+' '+bitCounter+' '+String(tokenCounter*8+bitCounter*64));
-					throw(err);
-				}
+				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
+				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
 			} else {
 				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('off');
 				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('on');
 			}
 		}
-		// parse to integer from hex
-		// process tokenList[tokenCounter]
 	}
-	// setting the right pixels high
 }
 
 function exportToHeader() {
@@ -126,6 +122,7 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 			if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 				this.classList.remove('on');
 				this.classList.add('off');
+				saveState();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
 				//pass
@@ -133,6 +130,7 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 			} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 				this.classList.remove('off');
 				this.classList.add('on');
+				saveState();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
 				//pass
@@ -146,6 +144,7 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 				if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 					this.classList.remove('on');
 					this.classList.add('off');
+					saveState();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
 					//pass
@@ -153,6 +152,7 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 				} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 					this.classList.remove('off');
 					this.classList.add('on');
+					saveState();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
 					//pass
@@ -164,3 +164,5 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 		parent.appendChild(temp);
 	}
 }
+
+loadState();
