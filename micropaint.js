@@ -61,11 +61,11 @@ function importFromHeader(header) {
 		// NOTE: get rid of 384 / magic numbers
 		// trim each tokenized entry
 		//("00" + tokenList[tokenCounter].trim().split('0x').pop()).slice(-2)
-		var temp = parseInt(tokenList[tokenCounter]).toString(2);
-		console.log(tokenList);
+		var temp = ("00000000" + parseInt(tokenList[tokenCounter]).toString(2)).slice(-8);
+		console.log(temp.length);
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
 			//bitArray[]
-			if(parseInt(temp[bitCounter], 2) === 1) {
+			if(parseInt(temp[7-bitCounter], 2) === 1) {
 				try {
 					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
 					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
