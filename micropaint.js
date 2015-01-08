@@ -80,10 +80,13 @@ function setupButtons() {
 		}
 	}
 	document.getElementById('exportButton').onclick = function() {
-		
+		window.prompt('Copy to clipboard: Ctrl+C, Enter', exportToHeader());
 	}
 	document.getElementById('importButton').onclick = function() {
-		
+		var temp = window.prompt('Paste to input: Ctrl+V, Enter', '');
+		if(temp !== '' && temp !== null) {
+			importFromHeader(temp);
+		}
 	}
 }
 
