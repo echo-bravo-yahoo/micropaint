@@ -70,10 +70,14 @@ function setupButtons() {
 		}
 	}
 	document.getElementById('clearScreenButton').onclick = function() {
-		clearScreen();
+		if(confirm('Are you sure you want to clear the screen?')) {
+			clearScreen();	
+		}
 	}
 	document.getElementById('fillScreenButton').onclick = function() {
-		fillScreen();
+		if(confirm('Are you sure you want to fill the screen?')) {
+			fillScreen();
+		}
 	}
 	document.getElementById('exportButton').onclick = function() {
 		
