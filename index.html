@@ -14,11 +14,24 @@
 			.off {
 				background-color: #666666;
 			}
-			.parent {
+			.parent{
 				height: 100%;
 				width: 100%;
+				display: flex;
+				flex-flow: row wrap;
+			}
+			.pixelParent {
+				height: 80%;
+				width: 80%;
 				max-height: 480;
 				max-width: 640;
+				display: flex;
+				flex-flow: row wrap;
+			}
+			.controls {
+				height: 100%;
+				width: 20%;
+				max-width: 240;
 				display: flex;
 				flex-flow: row wrap;
 			}
@@ -26,18 +39,26 @@
 			   -moz-user-select: -moz-none;
 			   -khtml-user-select: none;
 			   -webkit-user-select: none;
-
-			   /*
-			     Introduced in IE 10.
-			     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-			   */
+			   /* Introduced in IE 10. See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/ */
 			   -ms-user-select: none;
 			   user-select: none;
 			}
+			.button {
+				width: 100%;
+			}
 		</style>
 	</head>
-	<body style="cursor: crosshair;">
-		<div id="parent" class="parent"></div>
+	<body style="cursor: crosshair; margin: 0px;">
+		<div id="parent" class="parent">
+			<div id="controls" class="controls">
+				<button id="test" class="button">Test button 1</button>
+				<button id="test" class="button">Test button 2</button>
+				<button id="test" class="button">Test button 3</button>
+				<button id="test" class="button">Test button 4</button>
+				<button id="test" class="button">Test button 5</button>
+			</div>
+			<div id="pixelParent" class="pixelParent"></div>
+		</div>
 		<script src="micropaint.js"></script>
 	</body>
 </html>

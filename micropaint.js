@@ -7,7 +7,6 @@ document.body.onmousedown = function() {
 
 document.body.onmouseup = function() {
 	isMouseDown = false;
-	document.body.style.cursor = 'crosshair';
 }
 
 function homebrewTime(callback) {
@@ -28,6 +27,22 @@ function exportDriver(loops) {
 	console.log('per loop: '+String(time / loops));
 }
 
+function clearScreen() {
+	for(var i =0; i < 3072; i++) {
+		document.getElementById('pixel-'+i).classList.remove('on');
+		document.getElementById('pixel-'+i).classList.add('off');
+	}
+	saveState();
+}
+
+function fillScreen() {
+	for(var i =0; i < 3072; i++) {
+		document.getElementById('pixel-'+i).classList.remove('off');
+		document.getElementById('pixel-'+i).classList.add('on');
+	}
+	saveState();
+}
+
 function saveState() {
 	localStorage.setItem('state', exportToHeader());
 }
@@ -38,6 +53,7 @@ function loadState() {
 	}
 }
 
+//TO-DO: Make this function more efficient!
 function importFromHeader(header) {
 	var tokenList;
 	// trim char * declaration
@@ -68,7 +84,6 @@ function importFromHeader(header) {
 		// NOTE: get rid of 384 / magic numbers
 		var temp = ("00000000" + parseInt(tokenList[tokenCounter]).toString(2)).slice(-8);
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
-			//bitArray[]
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
 				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
 				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
@@ -160,8 +175,8 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 				//console.log(this.id.split('-').pop());
 			}
 		}
-		var parent = document.getElementById('parent');
-		parent.appendChild(temp);
+		var pixelParent = document.getElementById('pixelParent');
+		pixelParent.appendChild(temp);
 	}
 }
 
