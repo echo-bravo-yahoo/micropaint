@@ -28,6 +28,62 @@ function exportDriver(loops) {
 	console.log('per loop: '+String(time / loops));
 }
 
+function importFromHeader(header) {
+	var tokenList;
+	// trim char * declaration
+	if (header.indexOf('=') !== -1) {
+		header = header.split('=').pop();
+		header = header.trim();
+	}
+	// trim opening brace
+	// NOTE: This obsoletes the trimming above it in all cases?
+	if (header.indexOf('{') !== -1) {
+		header = header.split('{').pop();
+		header = header.trim();
+	}
+	// trim closing brace and potential semi-colon
+	if (header.indexOf('}') !== -1) {
+		header = header.split('{')[0];
+		header = header.trim();
+	}
+	if (header.indexOf(';') !== -1) {
+		header = header.split(';')[0];
+		header = header.trim();
+	}
+	// split on commas
+	tokenList = header.split(',');
+
+	// clear each pixel on screen
+	// loop for each entry
+	for (var tokenCounter = 0; tokenCounter < 384; tokenCounter++) {
+		//var bitArray = [];
+		// input in the form 0x4 or 0xff
+		// NOTE: get rid of 384 / magic numbers
+		// trim each tokenized entry
+		//("00" + tokenList[tokenCounter].trim().split('0x').pop()).slice(-2)
+		var temp = parseInt(tokenList[tokenCounter]).toString(2);
+		console.log(tokenList);
+		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
+			//bitArray[]
+			if(parseInt(temp[bitCounter], 2) === 1) {
+				try {
+					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
+					document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
+				} catch(err) {
+					console.log(tokenCounter+' '+bitCounter+' '+String(tokenCounter*8+bitCounter*64));
+					throw(err);
+				}
+			} else {
+				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('off');
+				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('on');
+			}
+		}
+		// parse to integer from hex
+		// process tokenList[tokenCounter]
+	}
+	// setting the right pixels high
+}
+
 function exportToHeader() {
 	// console.time('header');
 	var result = '{ ';
