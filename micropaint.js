@@ -53,6 +53,36 @@ function loadState() {
 	}
 }
 
+function setupButtons() {
+	document.getElementById('drawModeButton').onclick = function() {
+		if(drawMode === 'TOGGLE') {
+			drawMode = 'POSITIVE';
+			//this.value = 'Draw mode: \'Positive\'';
+			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Positive';
+		} else if(drawMode === 'POSITIVE') {
+			drawMode = 'NEGATIVE';
+			//this.value = 'Draw mode: \'Negative\'';
+			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Negative';
+		} else if(drawMode === 'NEGATIVE') {
+			drawMode = 'TOGGLE';
+			//this.value = 'Draw mode: \'Toggle\'';
+			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Toggle';
+		}
+	}
+	document.getElementById('clearScreenButton').onclick = function() {
+		clearScreen();
+	}
+	document.getElementById('fillScreenButton').onclick = function() {
+		fillScreen();
+	}
+	document.getElementById('exportButton').onclick = function() {
+		
+	}
+	document.getElementById('importButton').onclick = function() {
+		
+	}
+}
+
 //TO-DO: Make this function more efficient!
 function importFromHeader(header) {
 	var tokenList;
@@ -107,9 +137,9 @@ function exportToHeader() {
 			var bitArray = [];
 			var rowOffset = (rowCounter << 9);
 			for(var bitCounter = 0; bitCounter < 8; bitCounter++) {
-				if(document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on')) {
-					console.log('pixel '+String(rowOffset + byteCounter + (bitCounter<<6)));
-				}
+				//if(document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on')) {
+				//	console.log('pixel '+String(rowOffset + byteCounter + (bitCounter<<6)));
+				//}
 				bitArray[bitCounter] = document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on') | 0;
 			}
 			result += '0x'+((bitArray[0] << 0) + (bitArray[1] << 1) + (bitArray[2] << 2) + (bitArray[3] << 3) + (bitArray[4] << 4) + (bitArray[5] << 5) + (bitArray[6] << 6) + (bitArray[7] << 7)).toString(16) + ', ';
@@ -180,4 +210,5 @@ for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 	}
 }
 
+setupButtons();
 loadState();
