@@ -17,10 +17,10 @@ function homebrewTime(callback) {
 	return(endTime - startTime);
 }
 
-function exportDriver(loops) {
+function loopTimer(loops, callback) {
 	var time = homebrewTime(function() {
 		for(var i = 0; i < loops; i++) {
-			exportToHeader();
+			callback();
 		}
 	});
 	console.log('total time: '+ String(time));
