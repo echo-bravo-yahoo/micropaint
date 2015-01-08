@@ -86,6 +86,7 @@ function setupButtons() {
 		var temp = window.prompt('Paste to input: Ctrl+V, Enter', '');
 		if(temp !== '' && temp !== null) {
 			importFromHeader(temp);
+			saveState();
 		}
 	}
 }
