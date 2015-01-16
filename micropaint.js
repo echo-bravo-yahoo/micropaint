@@ -84,7 +84,7 @@ function setupButtons() {
 	}
 
 	$('#exportModal').on('shown.bs.modal', function () {
-		$('#exportModalTextArea').val(exportToHeader());
+		$('#exportModalTextArea').val("char sprite[] = " + String(exportToHeader()));
 		$('#exportModalTextArea').focus();
 		$('#exportModalTextArea').select();
 		$('#exportButton').blur()
