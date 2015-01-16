@@ -24,11 +24,28 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">C++ Header</h4>
+					<h4 class="modal-title">Export To C++ Header</h4>
 				</div>
 				<div class="modal-body">
 					<p>Copy to clipboard: Ctrl+C, Escape</p>
 					<textarea id="exportModalTextArea" style="width:100%;"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<div class="modal fade" id="importModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Import From C++ Header</h4>
+				</div>
+				<div class="modal-body">
+					<p>Copy to clipboard: Ctrl+C, Escape</p>
+					<textarea id="importModalTextArea" style="width:100%;"></textarea>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -44,7 +61,7 @@
 				<button id="clearScreenButton" class="btn btn-large btn-default" style="width:100%;" tabIndex="3">Clear Screen</button>
 				<button id="fillScreenButton" class="btn btn-large btn-default" style="width:100%;" tabIndex="4">Fill Screen</button>
 				<button id="exportButton" class="btn btn-large btn-default" data-toggle="modal" data-target="#exportModal" style="width:100%;" tabIndex="5">Export</button>
-				<button id="importButton" class="btn btn-large btn-default" style="width:100%;" tabIndex="6">Import</button>
+				<button id="importButton" class="btn btn-large btn-default" data-toggle="modal" data-target="#importModal" style="width:100%;" tabIndex="6">Import</button>
 				<div id="closingTabGuard" tabIndex="6"></div>
 			</div>
 			<div id="pixelParent" class="pixelParent"></div>

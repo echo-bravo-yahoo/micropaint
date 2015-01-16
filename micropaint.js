@@ -101,13 +101,20 @@ function setupButtons() {
 		$('#drawModeButton').focus();
 	});
 
-	document.getElementById('importButton').onclick = function() {
-		var temp = window.prompt('Paste to input: Ctrl+V, Enter', '');
-		if(temp !== '' && temp !== null) {
-			importFromHeader(temp);
+	$('#importModal').on('shown.bs.modal', function() {
+		$('#importModalTextArea').focus();
+	});
+
+	$('#importModal').on('hide.bs.modal', function() {
+		if($('#importModalTextArea').val().trim() !== '') {
+			importFromHeader($('#importModalTextArea').val());
 			saveState();
 		}
-	}
+	});
+
+	$('#importModal').on('hidden.bs.modal', function() {
+		$('#importModalTextArea').val('');
+	});
 }
 
 //TO-DO: Make this function more efficient!
