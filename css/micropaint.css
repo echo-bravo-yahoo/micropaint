@@ -1,0 +1,46 @@
+.pixel {
+	float: left;
+	height: 9px;
+	width: 9px;
+	margin-left: 1px;
+	margin-top: 1px;
+}
+.on {
+	background-color: #39B7CD;
+}
+.off {
+	background-color: #666666;
+}
+.parent{
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-flow: row wrap;
+}
+.pixelParent {
+	height: 80%;
+	width: 80%;
+	max-height: 480px;
+	max-width: 640px;
+	display: flex;
+	flex-flow: row wrap;
+}
+.controls {
+	height: 100%;
+	width: 20%;
+	max-width: 240px;
+	display: flex;
+	flex-flow: row wrap;
+}
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+
+	/* Introduced in IE 10. See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/ */
+	-ms-user-select: none;
+	user-select: none;
+}
+.button {
+	width: 100%;
+}

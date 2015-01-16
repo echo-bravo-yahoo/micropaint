@@ -80,8 +80,27 @@ function setupButtons() {
 		}
 	}
 	document.getElementById('exportButton').onclick = function() {
-		window.prompt('Copy to clipboard: Ctrl+C, Enter', exportToHeader());
+		//window.prompt('Copy to clipboard: Ctrl+C, Enter', exportToHeader());
 	}
+
+	$('#exportModal').on('shown.bs.modal', function () {
+		$('#exportModalTextArea').val(exportToHeader());
+		$('#exportModalTextArea').focus();
+		$('#exportModalTextArea').select();
+		$('#exportButton').blur()
+	})
+	$('#exportModal').on('hidden.bs.modal', function () {
+		$('#exportButton').blur();
+	});
+
+	$('#openingTabGuard').on('focus', function () {
+		$('#importButton').focus();
+	});
+
+	$('#closingTabGuard').on('focus', function () {
+		$('#drawModeButton').focus();
+	});
+
 	document.getElementById('importButton').onclick = function() {
 		var temp = window.prompt('Paste to input: Ctrl+V, Enter', '');
 		if(temp !== '' && temp !== null) {
