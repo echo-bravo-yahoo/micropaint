@@ -1,11 +1,11 @@
 var isMouseDown = false;
 var drawMode = 'TOGGLE';
 
-document.body.onmousedown = function() {
+document.onmousedown = function() {
 	isMouseDown = true;
 }
 
-document.body.onmouseup = function() {
+document.onmouseup = function() {
 	isMouseDown = false;
 }
 
