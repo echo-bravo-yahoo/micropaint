@@ -1,0 +1,78 @@
+.pixel {
+	float: left;
+	height: 9px;
+	width: 9px;
+	margin-left: 1px;
+	margin-top: 1px;
+}
+.on {
+	background-color: #39B7CD;
+}
+.off {
+	background-color: #666666;
+}
+.parent{
+	/*height: 100%;*/
+	/*width: 80%;*/
+	/*display: flex;
+	flex-flow: row wrap;*/
+}
+.pixelParent {
+	float: left;
+	/*height: 80%;*/
+	/*width: 80%;*/
+	max-height: 480px;
+	max-width: 640px;
+	clear: right;
+	/*display: flex;
+	flex-flow: row wrap;*/
+}
+.controls {
+	height: 100vh;
+	max-height: 100%;
+	width: 20%;
+	max-width: 240;
+	float: left;
+	/*display: flex;
+	flex-flow: row wrap;*/
+}
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	/* Introduced in IE 10. See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/ */
+	-ms-user-select: none;
+	user-select: none;
+}
+.controls .btn {
+	width: 100%;
+	height: 20% !important;
+}
+.toolbar {
+	/*display:inline-block;*/
+	float: left;
+	width: 80%;
+	overflow-y:hidden;
+	overflow-x:auto;
+	/*width:300px;*/
+	/*display: flex;
+	flex-flow: row wrap;*/
+}
+.toolbar .btn {
+	width: 150px;
+	height: 150px;
+	float: left;
+}
+.frame {
+	width: 150px;
+	height: 150px;
+	overflow: hidden;
+	float: left;
+}
+.clearfix:after { 
+	content: "."; 
+	visibility: hidden; 
+	display: block; 
+	height: 0; 
+	clear: both;
+}
