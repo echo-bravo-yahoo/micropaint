@@ -30,16 +30,16 @@ function loopTimer(loops, callback) {
 
 function clearScreen() {
 	for(var i =0; i < 3072; i++) {
-		$('pixel-'+i).removeClass('on');
-		$('pixel-'+i).addClass('off');
+		$('#pixel-'+i).removeClass('on');
+		$('#pixel-'+i).addClass('off');
 	}
 	saveState();
 }
 
 function fillScreen() {
 	for(var i =0; i < 3072; i++) {
-		$('pixel-'+i)removeClass('off');
-		$('pixel-'+i)addClass('on');
+		$('#pixel-'+i).removeClass('off');
+		$('#pixel-'+i).addClass('on');
 	}
 	saveState();
 }
@@ -189,15 +189,18 @@ function generateScreen(parentID, isMainScreen) {
 	for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 		for(var colCounter = 0; colCounter < 64; colCounter++) {
 			var temp = document.createElement('div');
-			temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
-			temp.className = 'pixel';
-			temp.className += ' off';
-			temp.className += ' unselectable';
-			//if(colCounter === 0) {
-			//	temp.className += ' firstPixel';
-			//} else if(colCounter === 63) {
-			//	temp.className += ' lastPixel';
-			//}
+			if(isMainScreen) {
+				temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
+				temp.className = 'pixel';
+				temp.className += ' off';
+				temp.className += ' unselectable';
+			} else {
+				temp.id = 'little-pixel-' + (rowCounter * 64 + colCounter);
+				temp.className = 'little-pixel';
+				temp.className += ' off';
+				temp.className += ' unselectable';
+			}
+			
 			if(isMainScreen) {
 				temp.onmousedown = function() {
 					//console.log(this);
@@ -244,7 +247,7 @@ function generateScreen(parentID, isMainScreen) {
 					}
 				}
 			}
-			$('#' + parentID.toString()).appendChild(temp);
+			$('#' + parentID.toString()).append(temp);
 		}
 	}
 }
