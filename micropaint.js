@@ -1,5 +1,6 @@
 var isMouseDown = false;
 var drawMode = 'TOGGLE';
+var frameCounter = 1;
 
 document.body.onmousedown = function() {
 	isMouseDown = true;
@@ -80,10 +81,18 @@ function setupButtons() {
 		}
 	}
 	document.getElementById('exportButton').onclick = function() {
-		
+		//oops
 	}
 	document.getElementById('importButton').onclick = function() {
-		
+		//oops
+	}
+	document.getElementById('addFrameButton').onclick = function() {
+		//alert('Add frame button pressed!');
+		//document.getElementById('addFrameButton').prepend()
+
+		$('#addFrameButton').prepend('<div id=frame'+frameCounter+'></div>');
+		generateScreen('frame'+frameCounter, false);
+		frameCounter++;
 	}
 }
 
@@ -153,66 +162,72 @@ function exportToHeader() {
 	return result.substring(0, result.length-2) + ' };';
 }
 
-for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
-	for(var colCounter = 0; colCounter < 64; colCounter++) {
-		var temp = document.createElement('div');
-		temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
-		temp.className = 'pixel';
-		temp.className += ' off';
-		temp.className += ' unselectable';
-		if(colCounter === 0) {
-			temp.className += ' firstPixel';
-		} else if(colCounter === 63) {
-			temp.className += ' lastPixel';
-		}
-		temp.onmousedown = function() {
-			//console.log(this);
-			// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
-			if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
-				this.classList.remove('on');
-				this.classList.add('off');
-				saveState();
-			// if the pixel is on and our drawmode is POSITIVE, then do nothing
-			} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
-				//pass
-			// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
-			} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
-				this.classList.remove('off');
-				this.classList.add('on');
-				saveState();
-			// if the pixel is on and our drawmode is POSITIVE, then do nothing
-			} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
-				//pass
-			}
-			//console.log(this.id.split('-').pop());
-		};
-		temp.onmouseover = function() {
-			if(isMouseDown) {
-				//console.log(this);
-				// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
-				if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
-					this.classList.remove('on');
-					this.classList.add('off');
-					saveState();
-				// if the pixel is on and our drawmode is POSITIVE, then do nothing
-				} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
-					//pass
-				// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
-				} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
-					this.classList.remove('off');
-					this.classList.add('on');
-					saveState();
-				// if the pixel is on and our drawmode is POSITIVE, then do nothing
-				} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
-					//pass
+function generateScreen(parentID, isMainScreen) {
+	for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
+		for(var colCounter = 0; colCounter < 64; colCounter++) {
+			var temp = document.createElement('div');
+			temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
+			temp.className = 'pixel';
+			temp.className += ' off';
+			temp.className += ' unselectable';
+			//if(colCounter === 0) {
+			//	temp.className += ' firstPixel';
+			//} else if(colCounter === 63) {
+			//	temp.className += ' lastPixel';
+			//}
+			if(isMainScreen) {
+				temp.onmousedown = function() {
+					//console.log(this);
+					// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
+					if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
+						this.classList.remove('on');
+						this.classList.add('off');
+						saveState();
+					// if the pixel is on and our drawmode is POSITIVE, then do nothing
+					} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
+						//pass
+					// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
+					} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
+						this.classList.remove('off');
+						this.classList.add('on');
+						saveState();
+					// if the pixel is on and our drawmode is POSITIVE, then do nothing
+					} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
+						//pass
+					}
+					//console.log(this.id.split('-').pop());
+				};
+				temp.onmouseover = function() {
+					if(isMouseDown) {
+						//console.log(this);
+						// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
+						if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
+							this.classList.remove('on');
+							this.classList.add('off');
+							saveState();
+						// if the pixel is on and our drawmode is POSITIVE, then do nothing
+						} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
+							//pass
+						// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
+						} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
+							this.classList.remove('off');
+							this.classList.add('on');
+							saveState();
+						// if the pixel is on and our drawmode is POSITIVE, then do nothing
+						} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
+							//pass
+						}
+						//console.log(this.id.split('-').pop());
+					}
 				}
-				//console.log(this.id.split('-').pop());
 			}
+			var pixelParent = document.getElementById(parentID.toString());
+			pixelParent.appendChild(temp);
 		}
-		var pixelParent = document.getElementById('pixelParent');
-		pixelParent.appendChild(temp);
 	}
 }
 
+generateScreen('pixelParent', true);
+generateScreen('frame0', false);
 setupButtons();
 loadState();
