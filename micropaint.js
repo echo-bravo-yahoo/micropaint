@@ -2,11 +2,11 @@ var isMouseDown = false;
 var drawMode = 'TOGGLE';
 var frameCounter = 1;
 
-document.body.onmousedown = function() {
+document.onmousedown = function() {
 	isMouseDown = true;
 }
 
-document.body.onmouseup = function() {
+document.onmouseup = function() {
 	isMouseDown = false;
 }
 
@@ -18,10 +18,10 @@ function homebrewTime(callback) {
 	return(endTime - startTime);
 }
 
-function exportDriver(loops) {
+function loopTimer(loops, callback) {
 	var time = homebrewTime(function() {
 		for(var i = 0; i < loops; i++) {
-			exportToHeader();
+			callback();
 		}
 	});
 	console.log('total time: '+ String(time));
@@ -80,20 +80,48 @@ function setupButtons() {
 			fillScreen();
 		}
 	}
-	document.getElementById('exportButton').onclick = function() {
-		//oops
-	}
-	document.getElementById('importButton').onclick = function() {
-		//oops
-	}
+
 	document.getElementById('addFrameButton').onclick = function() {
 		//alert('Add frame button pressed!');
 		//document.getElementById('addFrameButton').prepend()
 
-		$('#addFrameButton').prepend('<div id=frame'+frameCounter+'></div>');
+		$('#addFrameButton').before('<div id=frame'+frameCounter+' class=\'frame\'></div>');
 		generateScreen('frame'+frameCounter, false);
 		frameCounter++;
 	}
+
+	$('#exportModal').on('shown.bs.modal', function () {
+		$('#exportModalTextArea').val("char sprite[] = " + String(exportToHeader()));
+		$('#exportModalTextArea').focus();
+		$('#exportModalTextArea').select();
+		$('#exportButton').blur()
+	})
+	$('#exportModal').on('hidden.bs.modal', function () {
+		$('#exportButton').blur();
+	});
+
+	$('#openingTabGuard').on('focus', function () {
+		$('#importButton').focus();
+	});
+
+	$('#closingTabGuard').on('focus', function () {
+		$('#drawModeButton').focus();
+	});
+
+	$('#importModal').on('shown.bs.modal', function() {
+		$('#importModalTextArea').focus();
+	});
+
+	$('#importModal').on('hide.bs.modal', function() {
+		if($('#importModalTextArea').val().trim() !== '') {
+			importFromHeader($('#importModalTextArea').val());
+			saveState();
+		}
+	});
+
+	$('#importModal').on('hidden.bs.modal', function() {
+		$('#importModalTextArea').val('');
+	});
 }
 
 //TO-DO: Make this function more efficient!
