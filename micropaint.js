@@ -30,16 +30,16 @@ function loopTimer(loops, callback) {
 
 function clearScreen() {
 	for(var i =0; i < 3072; i++) {
-		document.getElementById('pixel-'+i).classList.remove('on');
-		document.getElementById('pixel-'+i).classList.add('off');
+		$('pixel-'+i).removeClass('on');
+		$('pixel-'+i).addClass('off');
 	}
 	saveState();
 }
 
 function fillScreen() {
 	for(var i =0; i < 3072; i++) {
-		document.getElementById('pixel-'+i).classList.remove('off');
-		document.getElementById('pixel-'+i).classList.add('on');
+		$('pixel-'+i)removeClass('off');
+		$('pixel-'+i)addClass('on');
 	}
 	saveState();
 }
@@ -55,35 +55,32 @@ function loadState() {
 }
 
 function setupButtons() {
-	document.getElementById('drawModeButton').onclick = function() {
+	$('#drawModeButton').onclick = function() {
 		if(drawMode === 'TOGGLE') {
 			drawMode = 'POSITIVE';
 			//this.value = 'Draw mode: \'Positive\'';
-			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Positive';
+			$('#drawModeButton').innerHTML = 'Draw mode: Positive';
 		} else if(drawMode === 'POSITIVE') {
 			drawMode = 'NEGATIVE';
 			//this.value = 'Draw mode: \'Negative\'';
-			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Negative';
+			$('#drawModeButton').innerHTML = 'Draw mode: Negative';
 		} else if(drawMode === 'NEGATIVE') {
 			drawMode = 'TOGGLE';
 			//this.value = 'Draw mode: \'Toggle\'';
-			document.getElementById('drawModeButton').innerHTML = 'Draw mode: Toggle';
+			$('#drawModeButton').innerHTML = 'Draw mode: Toggle';
 		}
 	}
-	document.getElementById('clearScreenButton').onclick = function() {
+	$('#clearScreenButton').onclick = function() {
 		if(confirm('Are you sure you want to clear the screen?')) {
 			clearScreen();	
 		}
 	}
-	document.getElementById('fillScreenButton').onclick = function() {
+	$('#fillScreenButton').onclick = function() {
 		if(confirm('Are you sure you want to fill the screen?')) {
 			fillScreen();
 		}
 	}
-	document.getElementById('addFrameButton').onclick = function() {
-		//alert('Add frame button pressed!');
-		//document.getElementById('addFrameButton').prepend()
-
+	$('#addFrameButton').onclick = function() {
 		$('#addFrameButton').before('<div id=frame'+frameCounter+' class=\'frame\'></div>');
 		generateScreen('frame'+frameCounter, false);
 		frameCounter++;
@@ -155,11 +152,11 @@ function importFromHeader(header) {
 		var temp = ("00000000" + parseInt(tokenList[tokenCounter]).toString(2)).slice(-8);
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
-				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
-				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
+				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('on');
+				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('off');
 			} else {
-				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('off');
-				document.getElementById('pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('on');
+				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.add('off');
+				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).classList.remove('on');
 			}
 		}
 	}
@@ -170,7 +167,6 @@ function exportToHeader() {
 	var result = '{ ';
 	var rowSize = 1;
 	var columnSize = 48;
-	// console.log(document.querySelectorAll('.pixel'));
 	for(var rowCounter = 0; rowCounter < 6; rowCounter++) {
 		for(var byteCounter = 0; byteCounter < 64; byteCounter++) {
 			//var bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7;
@@ -180,7 +176,7 @@ function exportToHeader() {
 				//if(document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on')) {
 				//	console.log('pixel '+String(rowOffset + byteCounter + (bitCounter<<6)));
 				//}
-				bitArray[bitCounter] = document.getElementById('pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on') | 0;
+				bitArray[bitCounter] = $('#pixel-'+Math.min(rowOffset + byteCounter + (bitCounter << 6), 3071)).classList.contains('on') | 0;
 			}
 			result += '0x'+((bitArray[0] << 0) + (bitArray[1] << 1) + (bitArray[2] << 2) + (bitArray[3] << 3) + (bitArray[4] << 4) + (bitArray[5] << 5) + (bitArray[6] << 6) + (bitArray[7] << 7)).toString(16) + ', ';
 		}
@@ -248,8 +244,7 @@ function generateScreen(parentID, isMainScreen) {
 					}
 				}
 			}
-			var pixelParent = document.getElementById(parentID.toString());
-			pixelParent.appendChild(temp);
+			$('#' + parentID.toString()).appendChild(temp);
 		}
 	}
 }
