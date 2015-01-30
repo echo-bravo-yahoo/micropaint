@@ -59,14 +59,12 @@ function fillScreen() {
 	saveState(true);
 }
 
-function saveState(forceSave) {
-	if(forceSave) {
-		localStorage.setItem('state', exportToHeader());
-	} else {
-		console.log('saved');
-		debounce(localStorage.setItem('state', exportToHeader()), 350);	
-	}
+function saveState() {
+	console.log('saved');
+	localStorage.setItem('state', exportToHeader());
 }
+
+var saveStateDebounced = debounce(saveState, 1000);
 
 function loadState() {
 	if(localStorage.getItem('state') !== null) {
@@ -205,6 +203,54 @@ function exportToHeader() {
 }
 
 function generateScreen(parentID, isMainScreen) {
+	if(isMainScreen) {
+		$('#'+parentID).mousedown(function(event) {
+			var target = event.target;
+			//console.log(this);
+			// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
+			if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
+				target.classList.remove('on');
+				target.classList.add('off');
+				saveStateDebounced();
+			// if the pixel is on and our drawmode is POSITIVE, then do nothing
+			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
+				//pass
+			// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
+			} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
+				target.classList.remove('off');
+				target.classList.add('on');
+				saveStateDebounced();
+			// if the pixel is on and our drawmode is POSITIVE, then do nothing
+			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
+				//pass
+			}
+			//console.log(this.id.split('-').pop());
+		});
+		$('#'+parentID).mouseover(function(event) {
+			var target = event.target;
+			if(isMouseDown) {
+				//console.log(target);
+				// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
+				if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
+					target.classList.remove('on');
+					target.classList.add('off');
+					saveStateDebounced();
+				// if the pixel is on and our drawmode is POSITIVE, then do nothing
+				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
+					//pass
+				// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
+				} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
+					target.classList.remove('off');
+					target.classList.add('on');
+					saveStateDebounced();
+				// if the pixel is on and our drawmode is POSITIVE, then do nothing
+				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
+					//pass
+				}
+				//console.log(target.id.split('-').pop());
+			}
+		});
+	}
 	for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 		for(var colCounter = 0; colCounter < 64; colCounter++) {
 			var temp = document.createElement('div');
@@ -218,52 +264,6 @@ function generateScreen(parentID, isMainScreen) {
 				temp.className = 'little-pixel';
 				temp.className += ' off';
 				temp.className += ' unselectable';
-			}
-			if(isMainScreen) {
-				temp.onmousedown = function() {
-					//console.log(this);
-					// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
-					if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
-						this.classList.remove('on');
-						this.classList.add('off');
-						saveState(false);
-					// if the pixel is on and our drawmode is POSITIVE, then do nothing
-					} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
-						//pass
-					// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
-					} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
-						this.classList.remove('off');
-						this.classList.add('on');
-						saveState(false);
-					// if the pixel is on and our drawmode is POSITIVE, then do nothing
-					} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
-						//pass
-					}
-					//console.log(this.id.split('-').pop());
-				};
-				temp.onmouseover = function() {
-					if(isMouseDown) {
-						//console.log(this);
-						// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
-						if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
-							this.classList.remove('on');
-							this.classList.add('off');
-							saveState(false);
-						// if the pixel is on and our drawmode is POSITIVE, then do nothing
-						} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
-							//pass
-						// if the pixel is off and our drawmode is TOGGLE or POSITIVE, then turn the pixel on
-						} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
-							this.classList.remove('off');
-							this.classList.add('on');
-							saveState(false);
-						// if the pixel is on and our drawmode is POSITIVE, then do nothing
-						} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
-							//pass
-						}
-						//console.log(this.id.split('-').pop());
-					}
-				}
 			}
 			$('#' + parentID.toString()).append(temp);
 		}
