@@ -10,6 +10,21 @@ document.onmouseup = function() {
 	isMouseDown = false;
 }
 
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 function homebrewTime(callback) {
 	var startTime = performance.now();
 	callback();
@@ -45,8 +60,11 @@ function fillScreen() {
 }
 
 function saveState() {
+	console.log('saved');
 	localStorage.setItem('state', exportToHeader());
 }
+
+var saveStateDebounced = debounce(saveState, 1000);
 
 function loadState() {
 	if(localStorage.getItem('state') !== null) {
@@ -193,7 +211,7 @@ function generateScreen(parentID, isMainScreen) {
 			if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 				target.classList.remove('on');
 				target.classList.add('off');
-				saveState();
+				saveStateDebounced();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 				//pass
@@ -201,7 +219,7 @@ function generateScreen(parentID, isMainScreen) {
 			} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 				target.classList.remove('off');
 				target.classList.add('on');
-				saveState();
+				saveStateDebounced();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 				//pass
@@ -211,13 +229,12 @@ function generateScreen(parentID, isMainScreen) {
 		$('#'+parentID).mouseover(function(event) {
 			var target = event.target;
 			if(isMouseDown) {
-				console.log(target);
 				//console.log(target);
 				// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
 				if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 					target.classList.remove('on');
 					target.classList.add('off');
-					saveState();
+					saveStateDebounced();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 					//pass
@@ -225,7 +242,7 @@ function generateScreen(parentID, isMainScreen) {
 				} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 					target.classList.remove('off');
 					target.classList.add('on');
-					saveState();
+					saveStateDebounced();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 					//pass
