@@ -10,6 +10,21 @@ document.onmouseup = function() {
 	isMouseDown = false;
 }
 
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 function homebrewTime(callback) {
 	var startTime = performance.now();
 	callback();
@@ -33,7 +48,7 @@ function clearScreen() {
 		$('#pixel-'+i).removeClass('on');
 		$('#pixel-'+i).addClass('off');
 	}
-	saveState();
+	saveState(true);
 }
 
 function fillScreen() {
@@ -41,11 +56,16 @@ function fillScreen() {
 		$('#pixel-'+i).removeClass('off');
 		$('#pixel-'+i).addClass('on');
 	}
-	saveState();
+	saveState(true);
 }
 
-function saveState() {
-	localStorage.setItem('state', exportToHeader());
+function saveState(forceSave) {
+	if(forceSave) {
+		localStorage.setItem('state', exportToHeader());
+	} else {
+		console.log('saved');
+		debounce(localStorage.setItem('state', exportToHeader()), 350);	
+	}
 }
 
 function loadState() {
@@ -110,7 +130,7 @@ function setupButtons() {
 	$('#importModal').on('hide.bs.modal', function() {
 		if($('#importModalTextArea').val().trim() !== '') {
 			importFromHeader($('#importModalTextArea').val());
-			saveState();
+			saveState(false);
 		}
 	});
 
@@ -206,7 +226,7 @@ function generateScreen(parentID, isMainScreen) {
 					if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 						this.classList.remove('on');
 						this.classList.add('off');
-						saveState();
+						saveState(false);
 					// if the pixel is on and our drawmode is POSITIVE, then do nothing
 					} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
 						//pass
@@ -214,7 +234,7 @@ function generateScreen(parentID, isMainScreen) {
 					} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 						this.classList.remove('off');
 						this.classList.add('on');
-						saveState();
+						saveState(false);
 					// if the pixel is on and our drawmode is POSITIVE, then do nothing
 					} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
 						//pass
@@ -228,7 +248,7 @@ function generateScreen(parentID, isMainScreen) {
 						if(this.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 							this.classList.remove('on');
 							this.classList.add('off');
-							saveState();
+							saveState(false);
 						// if the pixel is on and our drawmode is POSITIVE, then do nothing
 						} else if(this.classList.contains('on') && drawMode === 'POSITIVE') {
 							//pass
@@ -236,7 +256,7 @@ function generateScreen(parentID, isMainScreen) {
 						} else if(this.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 							this.classList.remove('off');
 							this.classList.add('on');
-							saveState();
+							saveState(false);
 						// if the pixel is on and our drawmode is POSITIVE, then do nothing
 						} else if(this.classList.contains('off') && drawMode === 'NEGATIVE') {
 							//pass
