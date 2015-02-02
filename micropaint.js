@@ -78,15 +78,15 @@ function setupButtons() {
 		if(drawMode === 'TOGGLE') {
 			drawMode = 'POSITIVE';
 			//this.value = 'Draw mode: \'Positive\'';
-			$('#drawModeButton').innerHTML = 'Draw mode: Positive';
+			$('#drawModeButton').html('Draw mode: Positive');
 		} else if(drawMode === 'POSITIVE') {
 			drawMode = 'NEGATIVE';
 			//this.value = 'Draw mode: \'Negative\'';
-			$('#drawModeButton').innerHTML = 'Draw mode: Negative';
+			$('#drawModeButton').html('Draw mode: Negative');
 		} else if(drawMode === 'NEGATIVE') {
 			drawMode = 'TOGGLE';
 			//this.value = 'Draw mode: \'Toggle\'';
-			$('#drawModeButton').innerHTML = 'Draw mode: Toggle';
+			$('#drawModeButton').html('Draw mode: Toggle');
 		}
 	});
 
@@ -104,8 +104,8 @@ function setupButtons() {
 
 	$('#addFrameButton').click(function() {
 		frameCounter++;
-		$('#addFrameButton').before('<div id=frame'+frameCounter+' class=\'frame\'></div>');
-		generateScreen('frame'+frameCounter, false);
+		$('#addFrameButton').before('<div id=frame-'+frameCounter+' class=\'frame\'></div>');
+		generateScreen('frame-'+frameCounter, false);
 	});
 
 	$('#exportModal').on('shown.bs.modal', function () {
@@ -171,7 +171,7 @@ function importFromHeader(header) {
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
 			var id = String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071));
 			var pixel = $('#pixel-'+id)
-			var littlePixel = $('#frame'+activeFrame+'-little-pixel-'+id);
+			var littlePixel = $('#frame-'+activeFrame+'-little-pixel-'+id);
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
 				pixel.addClass('on');
 				pixel.removeClass('off');
@@ -214,7 +214,7 @@ function generateScreen(parentID, isMainScreen) {
 	if(isMainScreen) {
 		$('#'+parentID).mousedown(function(event) {
 			var target = event.target;
-			var littleTarget = $('#frame'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
+			var littleTarget = $('#frame-'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
 			//console.log(this);
 			// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
 			if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
@@ -241,7 +241,7 @@ function generateScreen(parentID, isMainScreen) {
 		});
 		$('#'+parentID).mouseover(function(event) {
 			var target = event.target;
-			var littleTarget = $('#frame'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
+			var littleTarget = $('#frame-'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
 			if(isMouseDown) {
 				//console.log(target);
 				// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
@@ -268,33 +268,44 @@ function generateScreen(parentID, isMainScreen) {
 				//console.log(target.id.split('-').pop());
 			}
 		});
+	} else {
+		$('#'+parentID).click(function(event) {
+			if(activeFrame !== parseInt(this.id.split('-').pop())) {
+				$('#frame-'+activeFrame).removeClass('activeFrame');
+				activeFrame = parseInt(this.id.split('-').pop());
+				$('#frame-'+activeFrame).addClass('activeFrame');
+				generateScreen('pixelParent', true);
+			}
+		});
 	}
 	for(var rowCounter = 0; rowCounter < 48; rowCounter++) {
 		for(var colCounter = 0; colCounter < 64; colCounter++) {
-			var temp = document.createElement('div');
-			if(isMainScreen) {
-				temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
-				temp.className = 'pixel';
-				temp.className += ' off';
-				temp.className += ' unselectable';
-			} else {
-				temp.id = parentID+'-little-pixel-' + (rowCounter * 64 + colCounter);
-				temp.className = 'little-pixel';
-				temp.className += ' off';
-				temp.className += ' unselectable';
+			if( isMainScreen && !$('#pixel-' + (rowCounter * 64 + colCounter))[0] || !isMainScreen && !$('#'+parentID+'-little-pixel-' + (rowCounter * 64 + colCounter))[0]) {
+				var temp = document.createElement('div');
+				if(isMainScreen) {
+					temp.id = 'pixel-' + (rowCounter * 64 + colCounter);
+					temp.className = 'pixel';
+					temp.className += ' off';
+					temp.className += ' unselectable';
+				} else {
+					temp.id = parentID+'-little-pixel-' + (rowCounter * 64 + colCounter);
+					temp.className = 'little-pixel';
+					temp.className += ' off';
+					temp.className += ' unselectable';
+				}
+				if(colCounter === 0) {
+					temp.className += ' firstPixel';
+				} else if(colCounter === 63) {
+					temp.className += ' lastPixel';
+				}
+				$('#' + parentID.toString()).append(temp);
 			}
-			if(colCounter === 0) {
-				temp.className += ' firstPixel';
-			} else if(colCounter === 63) {
-				temp.className += ' lastPixel';
-			}
-			$('#' + parentID.toString()).append(temp);
 		}
 	}
 }
 
 generateScreen('pixelParent', true);
-generateScreen('frame0', false);
-$('#frame'+activeFrame).addClass('activeFrame');
+generateScreen('frame-0', false);
+$('#frame-'+activeFrame).addClass('activeFrame');
 setupButtons();
 loadState();
