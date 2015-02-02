@@ -265,6 +265,11 @@ function generateScreen(parentID, isMainScreen) {
 				temp.className += ' off';
 				temp.className += ' unselectable';
 			}
+			if(colCounter === 0) {
+				temp.className += ' firstPixel';
+			} else if(colCounter === 63) {
+				temp.className += ' lastPixel';
+			}
 			$('#' + parentID.toString()).append(temp);
 		}
 	}

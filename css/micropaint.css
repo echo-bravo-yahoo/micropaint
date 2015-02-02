@@ -24,6 +24,12 @@
 	/*display: flex;
 	flex-flow: row wrap;*/
 }
+.lastPixel {
+	clear:right;
+}
+.firstPixel {
+	clear: left;
+}
 .pixelParent {
 	float: left;
 	/*height: 80%;*/
