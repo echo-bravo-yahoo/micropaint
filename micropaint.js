@@ -1,6 +1,7 @@
 var isMouseDown = false;
 var drawMode = 'TOGGLE';
-var frameCounter = 1;
+var frameCounter = 0;
+var activeFrame = 0;
 
 document.onmousedown = function() {
 	isMouseDown = true;
@@ -102,9 +103,9 @@ function setupButtons() {
 	});
 
 	$('#addFrameButton').click(function() {
+		frameCounter++;
 		$('#addFrameButton').before('<div id=frame'+frameCounter+' class=\'frame\'></div>');
 		generateScreen('frame'+frameCounter, false);
-		frameCounter++;
 	});
 
 	$('#exportModal').on('shown.bs.modal', function () {
@@ -168,12 +169,19 @@ function importFromHeader(header) {
 		// NOTE: get rid of 384 / magic numbers
 		var temp = ("00000000" + parseInt(tokenList[tokenCounter]).toString(2)).slice(-8);
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
+			var id = String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071));
+			var pixel = $('#pixel-'+id)
+			var littlePixel = $('#frame'+activeFrame+'-little-pixel-'+id);
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
-				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).addClass('on');
-				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).removeClass('off');
+				pixel.addClass('on');
+				pixel.removeClass('off');
+				littlePixel.addClass('on');
+				littlePixel.removeClass('off');
 			} else {
-				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).addClass('off');
-				$('#pixel-'+String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071))).removeClass('on');
+				pixel.addClass('off');
+				pixel.removeClass('on');
+				littlePixel.addClass('off');
+				littlePixel.removeClass('on');
 			}
 		}
 	}
@@ -206,11 +214,14 @@ function generateScreen(parentID, isMainScreen) {
 	if(isMainScreen) {
 		$('#'+parentID).mousedown(function(event) {
 			var target = event.target;
+			var littleTarget = $('#frame'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
 			//console.log(this);
 			// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
 			if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 				target.classList.remove('on');
 				target.classList.add('off');
+				littleTarget.classList.remove('on');
+				littleTarget.classList.add('off');
 				saveStateDebounced();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
@@ -219,6 +230,8 @@ function generateScreen(parentID, isMainScreen) {
 			} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 				target.classList.remove('off');
 				target.classList.add('on');
+				littleTarget.classList.remove('off');
+				littleTarget.classList.add('on');
 				saveStateDebounced();
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
@@ -228,12 +241,15 @@ function generateScreen(parentID, isMainScreen) {
 		});
 		$('#'+parentID).mouseover(function(event) {
 			var target = event.target;
+			var littleTarget = $('#frame'+activeFrame+'-little-pixel-'+event.target.id.split('-').pop())[0];
 			if(isMouseDown) {
 				//console.log(target);
 				// if the pixel is on and our drawmode is TOGGLE or NEGATIVE, then turn the pixel off
 				if(target.classList.contains('on') && (drawMode === 'TOGGLE' || drawMode === 'NEGATIVE')) {
 					target.classList.remove('on');
 					target.classList.add('off');
+					littleTarget.classList.remove('on');
+					littleTarget.classList.add('off');
 					saveStateDebounced();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
@@ -242,6 +258,8 @@ function generateScreen(parentID, isMainScreen) {
 				} else if(target.classList.contains('off') && (drawMode === 'TOGGLE' || drawMode === 'POSITIVE')) {
 					target.classList.remove('off');
 					target.classList.add('on');
+					littleTarget.classList.remove('off');
+					littleTarget.classList.add('on');
 					saveStateDebounced();
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
@@ -260,7 +278,7 @@ function generateScreen(parentID, isMainScreen) {
 				temp.className += ' off';
 				temp.className += ' unselectable';
 			} else {
-				temp.id = 'little-pixel-' + (rowCounter * 64 + colCounter);
+				temp.id = parentID+'-little-pixel-' + (rowCounter * 64 + colCounter);
 				temp.className = 'little-pixel';
 				temp.className += ' off';
 				temp.className += ' unselectable';
@@ -277,5 +295,6 @@ function generateScreen(parentID, isMainScreen) {
 
 generateScreen('pixelParent', true);
 generateScreen('frame0', false);
+$('#frame'+activeFrame).addClass('activeFrame');
 setupButtons();
 loadState();

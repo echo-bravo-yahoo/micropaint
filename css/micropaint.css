@@ -7,8 +7,8 @@
 }
 .little-pixel {
 	float: left;
-	height: 9px;
-	width: 9px;
+	height: 2px;
+	width: 2px;
 	margin-left: 0px;
 	margin-top: 0px;
 }
@@ -81,6 +81,10 @@
 	height: 150px;
 	overflow: hidden;
 	float: left;
+	cursor: pointer;
+}
+.activeFrame {
+	cursor: auto !important;
 }
 .clearfix:after { 
 	content: "."; 
