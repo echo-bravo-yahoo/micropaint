@@ -45,12 +45,14 @@ function loopTimer(loops, callback) {
 	console.log('per loop: '+String(time / loops));
 }
 
-function clearScreen() {
+function clearScreen(save) {
 	for(var i =0; i < 3072; i++) {
 		$('#pixel-'+i).removeClass('on');
 		$('#pixel-'+i).addClass('off');
 	}
-	saveState(true);
+	if(save) {
+		saveState(activeFrame);
+	}
 }
 
 function fillScreen() {
@@ -58,19 +60,19 @@ function fillScreen() {
 		$('#pixel-'+i).removeClass('off');
 		$('#pixel-'+i).addClass('on');
 	}
-	saveState(true);
+	saveState(activeFrame);
 }
 
-function saveState() {
+function saveState(frame) {
 	console.log('saved');
-	localStorage.setItem('state', exportToHeader());
+	localStorage.setItem('state-'+frame, exportToHeader());
 }
 
-var saveStateDebounced = debounce(saveState, 1000);
+var saveStateDebounced =  saveState//= debounce(saveState, 1000);
 
-function loadState() {
-	if(localStorage.getItem('state') !== null) {
-		importFromHeader(localStorage.getItem('state'));	
+function loadState(frame, screen) {
+	if(localStorage.getItem('state-'+frame) !== null) {
+		importFromHeader(localStorage.getItem('state-'+frame), frame, screen);
 	}
 }
 
@@ -93,7 +95,7 @@ function setupButtons() {
 
 	$('#clearScreenButton').click(function() {
 		if(confirm('Are you sure you want to clear the screen?')) {
-			clearScreen();	
+			clearScreen(true);	
 		}
 	});
 
@@ -106,7 +108,10 @@ function setupButtons() {
 	$('#addFrameButton').click(function() {
 		frameCounter++;
 		$('#addFrameButton').before('<div id=frame-'+frameCounter+' class=\'frame\'></div>');
+		//generateScreen('pixelParent', true);
 		generateScreen('frame-'+frameCounter, false);
+
+		loadState(frameCounter, false);
 	});
 
 	$('#exportModal').on('shown.bs.modal', function () {
@@ -129,8 +134,8 @@ function setupButtons() {
 
 	$('#importModal').on('hide.bs.modal', function() {
 		if($('#importModalTextArea').val().trim() !== '') {
-			importFromHeader($('#importModalTextArea').val());
-			saveState(false);
+			importFromHeader($('#importModalTextArea').val(), true);
+			saveState(activeFrame);
 		}
 	});
 
@@ -140,7 +145,7 @@ function setupButtons() {
 }
 
 //TO-DO: Make this function more efficient!
-function importFromHeader(header) {
+function importFromHeader(header, frame, screen) {
 	var tokenList;
 	// trim char * declaration
 	if (header.indexOf('=') !== -1) {
@@ -172,15 +177,19 @@ function importFromHeader(header) {
 		for (var bitCounter = 0; bitCounter < 8; bitCounter++) {
 			var id = String(Math.min(tokenCounter%64 + bitCounter*64 + Math.floor(tokenCounter/64)*8*64, 3071));
 			var pixel = $('#pixel-'+id)
-			var littlePixel = $('#frame-'+activeFrame+'-little-pixel-'+id);
+			var littlePixel = $('#frame-'+frame+'-little-pixel-'+id);
 			if(parseInt(temp[7-bitCounter], 2) === 1) {
-				pixel.addClass('on');
-				pixel.removeClass('off');
+				if(screen) {
+					pixel.addClass('on');
+					pixel.removeClass('off');	
+				}
 				littlePixel.addClass('on');
 				littlePixel.removeClass('off');
 			} else {
-				pixel.addClass('off');
-				pixel.removeClass('on');
+				if(screen) {
+					pixel.addClass('off');
+					pixel.removeClass('on');	
+				}
 				littlePixel.addClass('off');
 				littlePixel.removeClass('on');
 			}
@@ -223,7 +232,7 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('off');
 				littleTarget.classList.remove('on');
 				littleTarget.classList.add('off');
-				saveStateDebounced();
+				saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 				//pass
@@ -233,7 +242,7 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('on');
 				littleTarget.classList.remove('off');
 				littleTarget.classList.add('on');
-				saveStateDebounced();
+				saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 				//pass
@@ -251,7 +260,7 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('off');
 					littleTarget.classList.remove('on');
 					littleTarget.classList.add('off');
-					saveStateDebounced();
+					saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 					//pass
@@ -261,7 +270,7 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('on');
 					littleTarget.classList.remove('off');
 					littleTarget.classList.add('on');
-					saveStateDebounced();
+					saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 					//pass
@@ -272,10 +281,14 @@ function generateScreen(parentID, isMainScreen) {
 	} else {
 		$('#'+parentID).click(function(event) {
 			if(activeFrame !== parseInt(this.id.split('-').pop())) {
+				saveState(activeFrame);
 				$('#frame-'+activeFrame).removeClass('activeFrame');
+
 				activeFrame = parseInt(this.id.split('-').pop());
+				clearScreen(false);
 				$('#frame-'+activeFrame).addClass('activeFrame');
-				generateScreen('pixelParent', true);
+				//generateScreen('pixelParent', true);
+				loadState(activeFrame, true);
 			}
 		});
 	}
@@ -309,4 +322,4 @@ generateScreen('pixelParent', true);
 generateScreen('frame-0', false);
 $('#frame-'+activeFrame).addClass('activeFrame');
 setupButtons();
-loadState();
+loadState(0, true);
