@@ -12,21 +12,6 @@ document.onmouseup = function() {
 	isMouseDown = false;
 }
 
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
-
 function homebrewTime(callback) {
 	var startTime = performance.now();
 	callback();
@@ -65,7 +50,7 @@ function fillScreen(save, frame) {
 		$('#frame-'+frame+'-little-pixel-'+i).addClass('on');
 	}
 	if(save) {
-		saveState(frame);	
+		saveState(frame);
 	}
 }
 
@@ -73,8 +58,6 @@ function saveState(frame) {
 	console.log('saved');
 	localStorage.setItem('state-'+frame, exportToHeader());
 }
-
-var saveStateDebounced =  saveState//= debounce(saveState, 1000);
 
 function loadState(frame, screen) {
 	if(localStorage.getItem('state-'+frame) !== null) {
@@ -238,7 +221,6 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('off');
 				littleTarget.classList.remove('on');
 				littleTarget.classList.add('off');
-				//saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 				//pass
@@ -248,7 +230,6 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('on');
 				littleTarget.classList.remove('off');
 				littleTarget.classList.add('on');
-				//saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 				//pass
@@ -266,7 +247,6 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('off');
 					littleTarget.classList.remove('on');
 					littleTarget.classList.add('off');
-					//saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 					//pass
@@ -276,7 +256,6 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('on');
 					littleTarget.classList.remove('off');
 					littleTarget.classList.add('on');
-					//saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 					//pass
@@ -294,9 +273,8 @@ function generateScreen(parentID, isMainScreen) {
 				$('#frame-'+activeFrame).removeClass('activeFrame');
 
 				activeFrame = parseInt(this.id.split('-').pop());
-				//clearScreen(false, activeFrame);
+				
 				$('#frame-'+activeFrame).addClass('activeFrame');
-				//generateScreen('pixelParent', true);
 				loadState(activeFrame, true);
 			}
 		});
