@@ -264,7 +264,7 @@ function generateScreen(parentID, isMainScreen) {
 			}
 		});
 		$('#'+parentID).mouseup(function() {
-			saveState();
+			saveState(activeFrame);
 		});
 	} else {
 		$('#'+parentID).click(function(event) {
@@ -273,7 +273,7 @@ function generateScreen(parentID, isMainScreen) {
 				$('#frame-'+activeFrame).removeClass('activeFrame');
 
 				activeFrame = parseInt(this.id.split('-').pop());
-				
+
 				$('#frame-'+activeFrame).addClass('activeFrame');
 				loadState(activeFrame, true);
 			}
