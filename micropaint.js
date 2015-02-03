@@ -2,6 +2,7 @@ var isMouseDown = false;
 var drawMode = 'TOGGLE';
 var frameCounter = 0;
 var activeFrame = 0;
+var frameList = [];
 
 document.onmousedown = function() {
 	isMouseDown = true;
