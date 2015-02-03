@@ -45,22 +45,28 @@ function loopTimer(loops, callback) {
 	console.log('per loop: '+String(time / loops));
 }
 
-function clearScreen(save) {
+function clearScreen(save, frame) {
 	for(var i =0; i < 3072; i++) {
 		$('#pixel-'+i).removeClass('on');
 		$('#pixel-'+i).addClass('off');
+		$('#frame-'+frame+'-little-pixel-'+i).removeClass('on');
+		$('#frame-'+frame+'-little-pixel-'+i).addClass('off');
 	}
 	if(save) {
-		saveState(activeFrame);
+		saveState(frame);
 	}
 }
 
-function fillScreen() {
+function fillScreen(save, frame) {
 	for(var i =0; i < 3072; i++) {
 		$('#pixel-'+i).removeClass('off');
 		$('#pixel-'+i).addClass('on');
+		$('#frame-'+frame+'-little-pixel-'+i).removeClass('off');
+		$('#frame-'+frame+'-little-pixel-'+i).addClass('on');
 	}
-	saveState(activeFrame);
+	if(save) {
+		saveState(frame);	
+	}
 }
 
 function saveState(frame) {
@@ -95,13 +101,13 @@ function setupButtons() {
 
 	$('#clearScreenButton').click(function() {
 		if(confirm('Are you sure you want to clear the screen?')) {
-			clearScreen(true);	
+			clearScreen(true, activeFrame);	
 		}
 	});
 
 	$('#fillScreenButton').click(function() {
 		if(confirm('Are you sure you want to fill the screen?')) {
-			fillScreen();
+			fillScreen(true, activeFrame);
 		}
 	});
 
@@ -134,7 +140,7 @@ function setupButtons() {
 
 	$('#importModal').on('hide.bs.modal', function() {
 		if($('#importModalTextArea').val().trim() !== '') {
-			importFromHeader($('#importModalTextArea').val(), true);
+			importFromHeader($('#importModalTextArea').val(), activeFrame, true);
 			saveState(activeFrame);
 		}
 	});
@@ -232,7 +238,7 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('off');
 				littleTarget.classList.remove('on');
 				littleTarget.classList.add('off');
-				saveStateDebounced(activeFrame);
+				//saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 				//pass
@@ -242,7 +248,7 @@ function generateScreen(parentID, isMainScreen) {
 				target.classList.add('on');
 				littleTarget.classList.remove('off');
 				littleTarget.classList.add('on');
-				saveStateDebounced(activeFrame);
+				//saveStateDebounced(activeFrame);
 			// if the pixel is on and our drawmode is POSITIVE, then do nothing
 			} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 				//pass
@@ -260,7 +266,7 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('off');
 					littleTarget.classList.remove('on');
 					littleTarget.classList.add('off');
-					saveStateDebounced(activeFrame);
+					//saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('on') && drawMode === 'POSITIVE') {
 					//pass
@@ -270,13 +276,16 @@ function generateScreen(parentID, isMainScreen) {
 					target.classList.add('on');
 					littleTarget.classList.remove('off');
 					littleTarget.classList.add('on');
-					saveStateDebounced(activeFrame);
+					//saveStateDebounced(activeFrame);
 				// if the pixel is on and our drawmode is POSITIVE, then do nothing
 				} else if(target.classList.contains('off') && drawMode === 'NEGATIVE') {
 					//pass
 				}
 				//console.log(target.id.split('-').pop());
 			}
+		});
+		$('#'+parentID).mouseup(function() {
+			saveState();
 		});
 	} else {
 		$('#'+parentID).click(function(event) {
@@ -285,7 +294,7 @@ function generateScreen(parentID, isMainScreen) {
 				$('#frame-'+activeFrame).removeClass('activeFrame');
 
 				activeFrame = parseInt(this.id.split('-').pop());
-				clearScreen(false);
+				//clearScreen(false, activeFrame);
 				$('#frame-'+activeFrame).addClass('activeFrame');
 				//generateScreen('pixelParent', true);
 				loadState(activeFrame, true);
